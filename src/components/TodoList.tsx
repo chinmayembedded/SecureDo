@@ -148,9 +148,9 @@ export function TodoList() {
     setSelectedTodo(null);
   };
 
-  const handleSaveDetails = async (id: string, details: string) => {
+  const handleSaveDetails = async (id: string, details: string, imageUri?: string) => {
     const updatedTodos = todos.map(todo =>
-      todo.id === id ? { ...todo, details } : todo
+      todo.id === id ? { ...todo, details, imageUri } : todo
     );
     setTodos(updatedTodos);
     await storage.saveTodos(updatedTodos);

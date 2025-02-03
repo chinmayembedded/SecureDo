@@ -7,23 +7,50 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { theme } from '../theme';
 import { Todo } from '../types/todo';
 
 interface TaskDetailProps {
   todo: Todo;
   onBack: () => void;
-  onSave: (id: string, details: string) => void;
+  onSave: (id: string, details: string, imageUri?: string) => void;
 }
 
 export function TaskDetail({ todo, onBack, onSave }: TaskDetailProps) {
   const [details, setDetails] = useState(todo.details || '');
+  const [imageUri, setImageUri] = useState(todo.imageUri || '');
 
   const handleSave = () => {
-    onSave(todo.id, details);
+    onSave(todo.id, details, imageUri);
     onBack();
+  };
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to upload images!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const removeImage = () => {
+    setImageUri('');
   };
 
   return (
@@ -52,6 +79,27 @@ export function TaskDetail({ todo, onBack, onSave }: TaskDetailProps) {
           autoFocus
           textAlignVertical="top"
         />
+
+        <Text style={styles.label}>Image</Text>
+        {imageUri ? (
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: imageUri }} style={styles.image} />
+            <TouchableOpacity 
+              style={styles.removeImageButton}
+              onPress={removeImage}
+            >
+              <Feather name="x-circle" size={24} color={theme.colors.error} />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity 
+            style={styles.addImageButton}
+            onPress={pickImage}
+          >
+            <Feather name="image" size={24} color={theme.colors.text} />
+            <Text style={styles.addImageText}>Add Image</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
@@ -121,5 +169,41 @@ const styles = StyleSheet.create({
     color: theme.colors.background,
     fontSize: 16,
     fontWeight: '600',
+  },
+  imageContainer: {
+    marginTop: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    borderRadius: theme.borderRadius.md,
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: theme.spacing.sm,
+    right: theme.spacing.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 20,
+    padding: 4,
+  },
+  addImageButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.lg,
+    marginTop: theme.spacing.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.accent,
+    borderStyle: 'dashed',
+  },
+  addImageText: {
+    color: theme.colors.text,
+    fontSize: 16,
+    marginLeft: theme.spacing.sm,
   },
 }); 

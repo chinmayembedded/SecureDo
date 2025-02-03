@@ -3,6 +3,8 @@ export interface Todo {
   title: string;
   isCompleted: boolean;
   createdAt: number;
+  details?: string;
+  imageUri?: string;
 }
 
 export type TodoFilter = 'all' | 'completed' | 'pending';
