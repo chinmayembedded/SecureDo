@@ -16,6 +16,7 @@ import { theme } from '../theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import { Celebration } from './Celebration';
+import { TaskDetail } from './TaskDetail';
 
 const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
@@ -35,6 +36,8 @@ export function TodoList() {
     return today;
   });
   const [showCelebration, setShowCelebration] = useState(false);
+  const [isDetailView, setIsDetailView] = useState(false);
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
   useEffect(() => {
     loadTodos();
@@ -135,6 +138,24 @@ export function TodoList() {
     setSelectedDate(date);
   };
 
+  const handleTodoPress = (todo: Todo) => {
+    setSelectedTodo(todo);
+    setIsDetailView(true);
+  };
+
+  const handleBack = () => {
+    setIsDetailView(false);
+    setSelectedTodo(null);
+  };
+
+  const handleSaveDetails = async (id: string, details: string) => {
+    const updatedTodos = todos.map(todo =>
+      todo.id === id ? { ...todo, details } : todo
+    );
+    setTodos(updatedTodos);
+    await storage.saveTodos(updatedTodos);
+  };
+
   const renderCalendar = () => (
     <MotiView
       from={{ opacity: 0, translateY: -20 }}
@@ -193,11 +214,7 @@ export function TodoList() {
             animate={{ opacity: 1, translateY: 0 }}
             exit={{
               opacity: 0,
-              translateY: -10,
-              transition: {
-                duration: 200,
-                type: 'timing'
-              }
+              translateY: -10
             }}
             transition={{
               type: 'timing',
@@ -209,31 +226,54 @@ export function TodoList() {
               renderRightActions={() => renderRightActions(todo.id)}
               rightThreshold={40}
             >
-              <View style={styles.todoItem}>
-                <TouchableOpacity
-                  style={styles.checkbox}
-                  onPress={() => toggleTodo(todo.id)}
-                >
-                  {todo.isCompleted && (
-                    <MotiView
-                      from={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 300 }}
-                    >
-                      <Feather name="check" size={16} color={theme.colors.success} />
-                    </MotiView>
+              <TouchableOpacity
+                onPress={() => handleTodoPress(todo)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.todoItem}>
+                  <TouchableOpacity
+                    style={styles.checkbox}
+                    onPress={() => toggleTodo(todo.id)}
+                  >
+                    {todo.isCompleted && (
+                      <MotiView
+                        from={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                      >
+                        <Feather name="check" size={16} color={theme.colors.success} />
+                      </MotiView>
+                    )}
+                  </TouchableOpacity>
+                  <Text style={[styles.todoTitle, todo.isCompleted && styles.completedTodo]}>
+                    {todo.title}
+                  </Text>
+                  {todo.details && (
+                    <Feather 
+                      name="file-text" 
+                      size={16} 
+                      color={theme.colors.textSecondary}
+                      style={styles.detailsIcon}
+                    />
                   )}
-                </TouchableOpacity>
-                <Text style={[styles.todoTitle, todo.isCompleted && styles.completedTodo]}>
-                  {todo.title}
-                </Text>
-              </View>
+                </View>
+              </TouchableOpacity>
             </Swipeable>
           </MotiView>
         ))}
       </ScrollView>
     );
   };
+
+  if (isDetailView && selectedTodo) {
+    return (
+      <TaskDetail
+        todo={selectedTodo}
+        onBack={handleBack}
+        onSave={handleSaveDetails}
+      />
+    );
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -460,5 +500,8 @@ const styles = StyleSheet.create({
     height: '90%',
     backgroundColor: 'transparent',
     marginVertical: 4,
+  },
+  detailsIcon: {
+    marginLeft: theme.spacing.sm,
   },
 }); 
