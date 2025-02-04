@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Dimensions
+  Dimensions,
+  Modal
 } from 'react-native';
 import { MotiView, AnimatePresence } from 'moti';
 import { Feather } from '@expo/vector-icons';
@@ -21,6 +22,7 @@ import { TaskDetail } from './TaskDetail';
 const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
                 'July', 'August', 'September', 'October', 'November', 'December'];
+const STORAGE_KEY = '@custom_recommended_tasks';
 
 export function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([]);

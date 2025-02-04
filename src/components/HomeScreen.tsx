@@ -6,18 +6,23 @@ import {
   TouchableOpacity,
   Image,
   Animated,
-  Dimensions
+  Dimensions,
+  Modal,
+  TextInput,
+  ScrollView
 } from 'react-native';
 import { theme } from '../theme';
 import { MotiView } from 'moti';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Todo } from '../types/todo';
 import { storage } from '../utils/storage';
+import { DEFAULT_TASKS } from '../utils/recommendedTasks';
 
 const { width } = Dimensions.get('window');
 
 export function HomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
+  const [recommendedTasks] = useState(DEFAULT_TASKS);
 
   const addSelectedTasksToTodo = async () => {
     const today = new Date();
@@ -76,39 +81,27 @@ export function HomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
         <Text style={styles.sectionTitle}>RECOMMENDED</Text>
         
         <View style={styles.habitsContainer}>
-          <View style={styles.habitsRow}>
-            {[
-              '🏃‍♂️ Exercise',
-              '📚 Read books',
-              '🧘‍♂️ Meditate',
-              '📝 Plan meals',
-              '🪴 Water plants',
-              '📔 Journal',
-              '🤸‍♂️ Stretch',
-              '🎯 Review goals',
-              // '🏃‍♀️ Run',
-              '✅ Review daily goals',
-              '🧘‍♀️ Yoga',
-              '🛒 Grocery shopping',
-              '💪 Go to the gym',
-            ].map((habit, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => toggleTaskSelection(habit)}
-                style={[
-                  styles.habitPill,
-                  selectedTasks.includes(habit) && styles.selectedHabitPill
-                ]}
-              >
-                <Text style={[
-                  styles.habitText,
-                  selectedTasks.includes(habit) && styles.selectedHabitText
-                ]}>
-                  {habit}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          <ScrollView style={styles.habitsScroll}>
+            <View style={styles.habitsRow}>
+              {recommendedTasks.map((habit, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => toggleTaskSelection(habit)}
+                  style={[
+                    styles.habitPill,
+                    selectedTasks.includes(habit) && styles.selectedHabitPill
+                  ]}
+                >
+                  <Text style={[
+                    styles.habitText,
+                    selectedTasks.includes(habit) && styles.selectedHabitText
+                  ]}>
+                    {habit}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
         </View>
 
         <MotiView>
@@ -189,11 +182,16 @@ const styles = StyleSheet.create({
   habitsContainer: {
     flex: 1,
     marginBottom: theme.spacing.lg,
+    maxHeight: '60%',
+  },
+  habitsScroll: {
+    flex: 1,
   },
   habitsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+    paddingBottom: theme.spacing.lg,
   },
   habitPill: {
     backgroundColor: theme.colors.surface,
