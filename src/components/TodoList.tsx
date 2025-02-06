@@ -7,7 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  Modal
+  Modal,
+  Image
 } from 'react-native';
 import { MotiView, AnimatePresence } from 'moti';
 import { Feather } from '@expo/vector-icons';
@@ -158,6 +159,20 @@ export function TodoList() {
     await storage.saveTodos(updatedTodos);
   };
 
+  const renderHeader = () => (
+    <MotiView
+      from={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: 'spring', delay: 100 }}
+      style={styles.headerContainer}
+    >
+      <Image
+        source={require('../../assets/logo_bg_removed.png')}
+        style={styles.logo}
+      />
+    </MotiView>
+  );
+
   const renderCalendar = () => (
     <MotiView
       from={{ opacity: 0, translateY: -20 }}
@@ -165,9 +180,19 @@ export function TodoList() {
       transition={{ type: 'timing', duration: 800 }}
       style={styles.calendarContainer}
     >
+      <View style={styles.monthHeader}>
+        <TouchableOpacity onPress={() => navigateWeek('prev')}>
+          <Feather name="chevron-left" size={24} color={theme.colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.monthText}>{getHeaderDate()}</Text>
+        <TouchableOpacity onPress={() => navigateWeek('next')}>
+          <Feather name="chevron-right" size={24} color={theme.colors.text} />
+        </TouchableOpacity>
+      </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.calendar}>
         {getDaysArray().map((date, index) => {
           const isSelected = isSameDay(date, selectedDate);
+          const isToday = isSameDay(date, new Date());
           return (
             <MotiView
               key={index}
@@ -176,13 +201,25 @@ export function TodoList() {
               transition={{ delay: index * 100 }}
             >
               <TouchableOpacity
-                style={[styles.dateItem, isSelected && styles.selectedDate]}
+                style={[
+                  styles.dateItem,
+                  isSelected && styles.selectedDate,
+                  isToday && styles.todayDate
+                ]}
                 onPress={() => selectDate(date)}
               >
-                <Text style={[styles.dayText, isSelected && styles.selectedDateText]}>
+                <Text style={[
+                  styles.dayText,
+                  isSelected && styles.selectedDateText,
+                  isToday && styles.todayText
+                ]}>
                   {DAYS[date.getDay()]}
                 </Text>
-                <Text style={[styles.dateText, isSelected && styles.selectedDateText]}>
+                <Text style={[
+                  styles.dateText,
+                  isSelected && styles.selectedDateText,
+                  isToday && styles.todayText
+                ]}>
                   {date.getDate()}
                 </Text>
               </TouchableOpacity>
@@ -212,16 +249,13 @@ export function TodoList() {
         {filteredTodos.map((todo, index) => (
           <MotiView
             key={todo.id}
-            from={{ opacity: 0, translateY: -10 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            exit={{
-              opacity: 0,
-              translateY: -10
-            }}
+            from={{ opacity: 0, translateX: -20 }}
+            animate={{ opacity: 1, translateX: 0 }}
+            exit={{ opacity: 0, translateX: -20 }}
             transition={{
-              type: 'timing',
-              duration: 300,
-              delay: index * 50
+              type: 'spring',
+              delay: index * 50,
+              damping: 15
             }}
           >
             <Swipeable
@@ -232,22 +266,35 @@ export function TodoList() {
                 onPress={() => handleTodoPress(todo)}
                 activeOpacity={0.7}
               >
-                <View style={styles.todoItem}>
+                <LinearGradient
+                  colors={todo.isCompleted ? 
+                    [theme.colors.surface, theme.colors.surface] : 
+                    ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.1)']}
+                  style={styles.todoItem}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
                   <TouchableOpacity
-                    style={styles.checkbox}
+                    style={[
+                      styles.checkbox,
+                      todo.isCompleted && styles.checkboxCompleted
+                    ]}
                     onPress={() => toggleTodo(todo.id)}
                   >
                     {todo.isCompleted && (
                       <MotiView
-                        from={{ scale: 0 }}
-                        animate={{ scale: 1 }}
+                        from={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
                         transition={{ type: 'spring', stiffness: 300 }}
                       >
-                        <Feather name="check" size={16} color={theme.colors.success} />
+                        <Feather name="check" size={16} color={theme.colors.background} />
                       </MotiView>
                     )}
                   </TouchableOpacity>
-                  <Text style={[styles.todoTitle, todo.isCompleted && styles.completedTodo]}>
+                  <Text style={[
+                    styles.todoTitle,
+                    todo.isCompleted && styles.completedTodo
+                  ]}>
                     {todo.title}
                   </Text>
                   {todo.details && (
@@ -258,7 +305,7 @@ export function TodoList() {
                       style={styles.detailsIcon}
                     />
                   )}
-                </View>
+                </LinearGradient>
               </TouchableOpacity>
             </Swipeable>
           </MotiView>
@@ -279,36 +326,12 @@ export function TodoList() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <MotiView
-            from={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ type: 'timing', duration: 1000 }}
-          >
-            <Text style={styles.appTitle}>SecureDo</Text>
-            <Text style={styles.headerYear}>{getHeaderDate()}</Text>
-            <View style={styles.weekNavigation}>
-              <TouchableOpacity 
-                style={styles.navButton}
-                onPress={() => navigateWeek('prev')}
-              >
-                <Feather name="chevron-left" size={24} color={theme.colors.background} />
-                <Text style={styles.navButtonText}>Previous</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.navButton}
-                onPress={() => navigateWeek('next')}
-              >
-                <Text style={styles.navButtonText}>Next</Text>
-                <Feather name="chevron-right" size={24} color={theme.colors.background} />
-              </TouchableOpacity>
-            </View>
-          </MotiView>
-        </View>
-
+      <LinearGradient
+        colors={[theme.colors.primary, theme.colors.background]}
+        style={styles.container}
+      >
+        {renderHeader()}
         {renderCalendar()}
-        
         <View style={styles.content}>
           {renderTodos()}
           <MotiView
@@ -321,7 +344,7 @@ export function TodoList() {
               style={styles.input}
               value={newTodoTitle}
               onChangeText={setNewTodoTitle}
-              placeholder="Write a task..."
+              placeholder="Add a new task..."
               placeholderTextColor={theme.colors.textSecondary}
               onSubmitEditing={addTodo}
             />
@@ -331,7 +354,7 @@ export function TodoList() {
               disabled={!newTodoTitle.trim()}
             >
               <LinearGradient
-                colors={[theme.colors.gradient[0], theme.colors.gradient[1]]}
+                colors={theme.colors.gradient}
                 style={styles.addButtonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -341,11 +364,11 @@ export function TodoList() {
             </TouchableOpacity>
           </MotiView>
         </View>
-      </View>
-      <Celebration 
-        visible={showCelebration} 
-        onClose={() => setShowCelebration(false)} 
-      />
+        <Celebration 
+          visible={showCelebration} 
+          onClose={() => setShowCelebration(false)} 
+        />
+      </LinearGradient>
     </GestureHandlerRootView>
   );
 }
@@ -353,107 +376,99 @@ export function TodoList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.primary,
   },
-  header: {
-    padding: theme.spacing.lg,
-    paddingTop: theme.spacing.xl * 2,
-    backgroundColor: theme.colors.primary,
+  headerContainer: {
+    alignItems: 'center',
+    paddingTop: theme.spacing.xl,
+    paddingBottom: theme.spacing.md,
   },
-  appTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.colors.text,
-    marginBottom: theme.spacing.sm,
+  logo: {
+    width: 80,
+    height: 80,
+    borderRadius: 12,
   },
-  headerYear: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: theme.colors.text,
-    marginBottom: theme.spacing.sm,
+  calendarContainer: {
+    paddingTop: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
   },
-  weekNavigation: {
+  monthHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: theme.spacing.md,
   },
-  navButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: theme.spacing.sm,
-  },
-  navButtonText: {
-    color: theme.colors.background,
-    fontSize: 16,
-    marginHorizontal: theme.spacing.xs,
-  },
-  calendarContainer: {
-    backgroundColor: theme.colors.background,
-    marginTop: -20,
-    borderRadius: theme.borderRadius.md,
-    marginHorizontal: theme.spacing.md,
-    padding: theme.spacing.sm,
-    borderWidth: 1,
-    borderColor: theme.colors.accent,
-  },
-  calendar: {
-    flexDirection: 'row',
-  },
-  dateItem: {
-    width: 55,
-    height: 75,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: theme.spacing.xs,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.surface,
-    borderWidth: 1,
-    borderColor: theme.colors.accent,
-  },
-  selectedDate: {
-    backgroundColor: theme.colors.primary,
-  },
-  dayText: {
-    fontSize: 12,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xs,
-  },
-  dateText: {
+  monthText: {
     fontSize: 20,
     fontWeight: '600',
     color: theme.colors.text,
   },
+  calendar: {
+    flexDirection: 'row',
+    marginBottom: theme.spacing.lg,
+  },
+  dateItem: {
+    width: 50,
+    height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: theme.spacing.sm,
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  },
+  selectedDate: {
+    backgroundColor: theme.colors.primary,
+  },
+  todayDate: {
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+  },
+  dayText: {
+    fontSize: 12,
+    color: theme.colors.textSecondary,
+    marginBottom: 4,
+    fontWeight: '500',
+  },
+  dateText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: theme.colors.text,
+  },
   selectedDateText: {
-    color: theme.colors.background,
+    color: '#FFFFFF',
+  },
+  todayText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
   content: {
     flex: 1,
-    marginTop: 0,
+    paddingTop: theme.spacing.md,
   },
   todoList: {
     flex: 1,
     paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.xs,
   },
   todoItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: theme.spacing.md,
-    backgroundColor: theme.colors.background,
-    borderRadius: theme.borderRadius.sm,
+    borderRadius: theme.borderRadius.lg,
     marginBottom: theme.spacing.sm,
-    borderWidth: 1,
-    borderColor: theme.colors.accent,
   },
   checkbox: {
-    width: 22,
-    height: 22,
-    borderWidth: 1.5,
-    borderColor: theme.colors.textSecondary,
-    borderRadius: theme.borderRadius.sm,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: theme.colors.primary,
     marginRight: theme.spacing.md,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  checkboxCompleted: {
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
   },
   todoTitle: {
     flex: 1,
@@ -467,14 +482,12 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     padding: theme.spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.surface,
-    backgroundColor: theme.colors.background,
+    paddingBottom: theme.spacing.xl,
   },
   input: {
     flex: 1,
     height: 50,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 25,
     paddingHorizontal: theme.spacing.lg,
     marginRight: theme.spacing.md,
@@ -499,9 +512,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 70,
-    height: '90%',
-    backgroundColor: 'transparent',
+    height: '100%',
+    backgroundColor: 'rgba(255,59,48,0.2)',
     marginVertical: 4,
+    borderRadius: theme.borderRadius.lg,
   },
   detailsIcon: {
     marginLeft: theme.spacing.sm,
