@@ -9,7 +9,24 @@ interface CelebrationProps {
   onClose: () => void;
 }
 
+const CELEBRATION_MESSAGES = [
+  "Great job! 🎉",
+  "Well done! ⭐",
+  "Kudos! 🌟",
+  "Bravo! 🎯",
+  "Awesome! 🚀",
+  "You rock! 💫",
+  "Fantastic! 🌈",
+  "Keep it up! 💪",
+  "Brilliant! ✨",
+  "Superb! 🏆"
+];
+
 export function Celebration({ visible, onClose }: CelebrationProps) {
+  const [message] = React.useState(() => 
+    CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)]
+  );
+
   React.useEffect(() => {
     if (visible) {
       const timer = setTimeout(onClose, 2000);
@@ -33,7 +50,7 @@ export function Celebration({ visible, onClose }: CelebrationProps) {
           >
             <Feather name="star" size={50} color={theme.colors.primary} />
           </MotiView>
-          <Text style={styles.text}>Great job! 🎉</Text>
+          <Text style={styles.text}>{message}</Text>
         </MotiView>
       </View>
     </Modal>

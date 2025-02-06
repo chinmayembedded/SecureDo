@@ -512,9 +512,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 70,
-    height: '100%',
-    backgroundColor: 'rgba(255,59,48,0.2)',
+    height: '90%',
+    backgroundColor: 'transparent',
     marginVertical: 4,
+    marginTop: 2,
     borderRadius: theme.borderRadius.lg,
   },
   detailsIcon: {
