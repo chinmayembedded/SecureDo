@@ -15,7 +15,6 @@ import { Feather } from '@expo/vector-icons';
 import { Todo } from '../types/todo';
 import { storage } from '../utils/storage';
 import { theme } from '../theme';
-import { LinearGradient } from 'expo-linear-gradient';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import { Celebration } from './Celebration';
 import { TaskDetail } from './TaskDetail';
@@ -25,8 +24,12 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
                 'July', 'August', 'September', 'October', 'November', 'December'];
 const STORAGE_KEY = '@custom_recommended_tasks';
 
-export function TodoList() {
-  const [todos, setTodos] = useState<Todo[]>([]);
+interface TodoListProps {
+  todos: Todo[];
+  setTodos: (todos: Todo[]) => void;
+}
+
+export function TodoList({ todos, setTodos }: TodoListProps) {
   const [newTodoTitle, setNewTodoTitle] = useState('');
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
@@ -41,24 +44,6 @@ export function TodoList() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [isDetailView, setIsDetailView] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
-
-  useEffect(() => {
-    loadTodos();
-  }, []);
-
-  useEffect(() => {
-    loadTodos();
-  }, [selectedDate]);
-
-  const loadTodos = async () => {
-    try {
-      const loadedTodos = await storage.loadTodos();
-      console.log('Loaded todos:', loadedTodos.length);
-      setTodos(loadedTodos);
-    } catch (error) {
-      console.error('Error loading todos:', error);
-    }
-  };
 
   const getDaysArray = () => {
     const days = [];
@@ -266,14 +251,10 @@ export function TodoList() {
                 onPress={() => handleTodoPress(todo)}
                 activeOpacity={0.7}
               >
-                <LinearGradient
-                  colors={todo.isCompleted ? 
-                    [theme.colors.surface, theme.colors.surface] : 
-                    ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.1)']}
-                  style={styles.todoItem}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
+                <View style={[
+                  styles.todoItem,
+                  todo.isCompleted && styles.completedTodoItem
+                ]}>
                   <TouchableOpacity
                     style={[
                       styles.checkbox,
@@ -305,7 +286,7 @@ export function TodoList() {
                       style={styles.detailsIcon}
                     />
                   )}
-                </LinearGradient>
+                </View>
               </TouchableOpacity>
             </Swipeable>
           </MotiView>
@@ -326,10 +307,7 @@ export function TodoList() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[theme.colors.primary, theme.colors.background]}
-        style={styles.container}
-      >
+      <View style={styles.container}>
         {renderHeader()}
         {renderCalendar()}
         <View style={styles.content}>
@@ -353,14 +331,9 @@ export function TodoList() {
               onPress={addTodo}
               disabled={!newTodoTitle.trim()}
             >
-              <LinearGradient
-                colors={theme.colors.gradient}
-                style={styles.addButtonGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-              >
+              <View style={styles.addButtonGradient}>
                 <Feather name="plus" size={24} color={theme.colors.background} />
-              </LinearGradient>
+              </View>
             </TouchableOpacity>
           </MotiView>
         </View>
@@ -368,7 +341,7 @@ export function TodoList() {
           visible={showCelebration} 
           onClose={() => setShowCelebration(false)} 
         />
-      </LinearGradient>
+      </View>
     </GestureHandlerRootView>
   );
 }
@@ -407,16 +380,16 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.lg,
   },
   dateItem: {
-    width: 50,
-    height: 70,
+    width: 54,
+    height: 74,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: theme.spacing.sm,
     borderRadius: theme.borderRadius.lg,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: theme.colors.surface,
   },
   selectedDate: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.surfaceHighlight,
   },
   todayDate: {
     borderWidth: 1,
@@ -455,16 +428,21 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
     borderRadius: theme.borderRadius.lg,
     marginBottom: theme.spacing.sm,
+    backgroundColor: theme.colors.surface,
+  },
+  completedTodoItem: {
+    backgroundColor: theme.colors.surface,
   },
   checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     borderWidth: 2,
     borderColor: theme.colors.primary,
     marginRight: theme.spacing.md,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(124, 77, 255, 0.1)',
   },
   checkboxCompleted: {
     backgroundColor: theme.colors.primary,
@@ -487,7 +465,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: 50,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: theme.colors.surface,
     borderRadius: 25,
     paddingHorizontal: theme.spacing.lg,
     marginRight: theme.spacing.md,
@@ -507,6 +485,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: theme.colors.primary,
+    borderRadius: 25,
   },
   deleteAction: {
     justifyContent: 'center',

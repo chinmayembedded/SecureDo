@@ -28,7 +28,6 @@ export function HomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Generate unique IDs with timestamps
     const newTodos: Todo[] = selectedTasks.map(task => ({
       id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       title: task,
@@ -40,8 +39,6 @@ export function HomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
       const existingTodos = await storage.loadTodos();
       const updatedTodos = [...existingTodos, ...newTodos];
       await storage.saveTodos(updatedTodos);
-      
-      // Log for debugging
       console.log('Added todos:', newTodos);
       console.log('Total todos:', updatedTodos.length);
     } catch (error) {
@@ -61,7 +58,6 @@ export function HomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <MotiView style={styles.logoContainer}>
-          {/* <Text style={styles.appTitle}>SecureDo</Text> */}
           <Image
             source={require('../../assets/logo_bg_removed.png')}
             style={styles.logo}
@@ -220,12 +216,6 @@ const styles = StyleSheet.create({
     color: theme.colors.background,
     fontSize: 16,
     fontWeight: '600',
-  },
-  appTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.colors.text,
-    marginBottom: theme.spacing.md,
   },
   selectedHabitPill: {
     backgroundColor: theme.colors.primary,
