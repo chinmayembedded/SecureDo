@@ -18,6 +18,7 @@ import { theme } from '../theme';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import { Celebration } from './Celebration';
 import { TaskDetail } from './TaskDetail';
+import { ChecklistItem } from '../types/checklist';
 
 const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
@@ -148,9 +149,9 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
     setSelectedTodo(null);
   };
 
-  const handleSaveDetails = async (id: string, details: string, imageUri?: string) => {
+  const handleSaveDetails = async (id: string, details: string, imageUri?: string, checklist?: ChecklistItem[]) => {
     const updatedTodos = todos.map(todo =>
-      todo.id === id ? { ...todo, details, imageUri } : todo
+      todo.id === id ? { ...todo, details, imageUri, checklist } : todo
     );
     setTodos(updatedTodos);
     await storage.saveTodos(updatedTodos);
@@ -298,6 +299,22 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
                       style={styles.detailsIcon}
                     />
                   )}
+                  <View style={styles.todoActions}>
+                    {todo.checklist && todo.checklist.length > 0 && (
+                      <View style={styles.checklistIndicator}>
+                        <Text style={styles.checklistCount}>
+                          {todo.checklist.filter(item => item.isCompleted).length}/{todo.checklist.length}
+                        </Text>
+                        <Feather name="check-square" size={14} color={theme.colors.textSecondary} />
+                      </View>
+                    )}
+                    <TouchableOpacity
+                      style={styles.detailsIcon}
+                      onPress={() => handleTodoPress(todo)}
+                    >
+                      <Feather name="more-vertical" size={20} color={theme.colors.textSecondary} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </TouchableOpacity>
             </Swipeable>
@@ -512,5 +529,23 @@ const styles = StyleSheet.create({
   },
   detailsIcon: {
     marginLeft: theme.spacing.sm,
+  },
+  todoActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checklistIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.surface,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginRight: 8,
+  },
+  checklistCount: {
+    fontSize: 12,
+    color: theme.colors.textSecondary,
+    marginRight: 4,
   },
 }); 

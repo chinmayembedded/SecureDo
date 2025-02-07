@@ -1,3 +1,9 @@
+export interface ChecklistItem {
+  id: string;
+  text: string;
+  isCompleted: boolean;
+}
+
 export interface Todo {
   id: string;
   title: string;
@@ -5,6 +11,7 @@ export interface Todo {
   createdAt: number;
   details?: string;
   imageUri?: string;
+  checklist?: ChecklistItem[];
 }
 
 export type TodoFilter = 'all' | 'completed' | 'pending';
