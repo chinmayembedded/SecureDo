@@ -1,50 +1,92 @@
-# Welcome to your Expo app 👋
+<p align="center">
+  <img src="assets/logo_bg_removed.png" width="150" height="150" style="border-radius: 20px;">
+</p>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# SecureDo: Your Private Task Manager
 
-## Get started
+SecureDo is a privacy-focused task management app that keeps your personal tasks and habits completely secure on your device. Unlike cloud-based solutions, SecureDo prioritizes your privacy by storing all data locally.
 
-1. Install dependencies
+## Key Features
 
-   ```bash
-   npm install
-   ```
+### 🔒 Privacy-First Architecture
+- **100% On-Device Storage**: All your tasks, details, and analytics are stored securely on your device
+- **No Cloud Sync**: Your data never leaves your device, eliminating cloud security risks
+- **No Account Required**: Start using the app immediately without sharing any personal information
 
-2. Start the app
+### ✅ Task Management
+- Create and manage daily tasks
+- Add detailed notes and images to tasks
+- Swipe-to-delete functionality
+- Visual completion indicators
+- Calendar view for task organization
 
-   ```bash
-    npx expo start
-   ```
+### 📊 Private Analytics
+- Track completion rates
+- View 7-day activity patterns
+- Monitor total and completed task statistics
+- All analytics computed locally for maximum privacy
 
-In the output, you'll find options to open the app in a
+### 🎯 Smart Features
+- Recommended tasks for quick setup
+- Task categorization
+- Visual progress tracking
+- Celebration animations for completed tasks
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 📱 User Experience
+- Clean, minimalist interface
+- Dark theme for reduced eye strain
+- Smooth animations and transitions
+- Bottom tab navigation for easy access
+- Responsive design for all screen sizes
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### 📄 Task Details
+- Add detailed notes to tasks
+- Attach images securely
+- Export task details as PDF
+- Share task information selectively
 
-## Get a fresh project
+## Privacy & Security Benefits
 
-When you're ready, run:
+### Why Local Storage Matters
+- **Data Control**: You have complete control over your personal information
+- **Offline Access**: Access your tasks anytime, even without internet
+- **No Data Breaches**: Your data can't be compromised in server breaches
+- **No Third-Party Access**: Your tasks remain private to you
+- **GDPR Compliant**: No personal data collection or processing
 
+### Technical Security
+- Secure local storage implementation
+- Protected file system access
+- Private image handling
+- Secure PDF generation for sharing
+
+## Getting Started
+
+1. Install dependencies:
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Start the app:
+```bash
+npx expo start
+```
 
-## Learn more
+## Privacy Policy
+SecureDo is committed to your privacy. We don't:
+- Collect personal information
+- Track usage data
+- Require internet access
+- Share any data with third parties
 
-To learn more about developing your project with Expo, look at the following resources:
+## Contributing
+We welcome contributions that enhance privacy and security. Please ensure any contributions maintain our strict privacy-first approach.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## License
+MIT License - See LICENSE file for details
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+<p align="center">
+Built with privacy in mind. Your tasks, your device, your data.
+</p>
