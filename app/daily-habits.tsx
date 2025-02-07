@@ -10,10 +10,11 @@ import { Todo } from '../src/types/todo';
 import { storage } from '../src/utils/storage';
 import { MotiView } from 'moti';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Settings } from '../src/components/Settings';
 
 export default function DailyHabits() {
   const [hasOnboarded, setHasOnboarded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'Tasks' | 'Analytics'>('Tasks');
+  const [activeTab, setActiveTab] = useState<'Tasks' | 'Analytics' | 'Settings'>('Tasks');
   const [todos, setTodos] = useState<Todo[]>([]);
   const insets = useSafeAreaInsets();
 
@@ -24,14 +25,31 @@ export default function DailyHabits() {
   const loadTodos = async () => {
     try {
       const loadedTodos = await storage.loadTodos();
+      console.log('Initial load todos:', loadedTodos);
       setTodos(loadedTodos);
     } catch (error) {
       console.error('Error loading todos:', error);
     }
   };
 
+  const handleAddTodos = async (newTodos: Todo[]) => {
+    try {
+      const updatedTodos = [...todos, ...newTodos];
+      await storage.saveTodos(updatedTodos);
+      setTodos(updatedTodos);
+      console.log('Updated todos after adding:', updatedTodos);
+    } catch (error) {
+      console.error('Error adding todos:', error);
+    }
+  };
+
   if (!hasOnboarded) {
-    return <HomeScreen onGetStarted={() => setHasOnboarded(true)} />;
+    return (
+      <HomeScreen 
+        onGetStarted={() => setHasOnboarded(true)} 
+        onAddTodos={handleAddTodos}
+      />
+    );
   }
 
   return (
@@ -43,8 +61,10 @@ export default function DailyHabits() {
         <View style={styles.content}>
           {activeTab === 'Tasks' ? (
             <TodoList todos={todos} setTodos={setTodos} />
-          ) : (
+          ) : activeTab === 'Analytics' ? (
             <Analytics todos={todos} />
+          ) : (
+            <Settings todos={todos} setTodos={setTodos} />
           )}
         </View>
 
@@ -92,6 +112,26 @@ export default function DailyHabits() {
                   name="bar-chart-2"
                   size={24}
                   color={activeTab === 'Analytics' ? theme.colors.primary : theme.colors.textSecondary}
+                />
+              </View>
+            </MotiView>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.tab}
+            onPress={() => setActiveTab('Settings')}
+          >
+            <MotiView
+              animate={{ 
+                opacity: activeTab === 'Settings' ? 1 : 0.6,
+              }}
+              transition={{ type: 'timing', duration: 200 }}
+            >
+              <View style={styles.tabButton}>
+                <Feather
+                  name="settings"
+                  size={24}
+                  color={activeTab === 'Settings' ? theme.colors.primary : theme.colors.textSecondary}
                 />
               </View>
             </MotiView>

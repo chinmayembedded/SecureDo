@@ -1,29 +1,53 @@
-import * as FileSystem from 'expo-file-system';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Todo } from '../types/todo';
 
-const TODO_FILE = `${FileSystem.documentDirectory}todos.json`;
+const TODOS_KEY = '@todos';
 
 export const storage = {
+  async saveTodos(todos: Todo[]) {
+    try {
+      // Ensure dates are properly formatted
+      const sanitizedTodos = todos.map(todo => ({
+        ...todo,
+        createdAt: new Date(todo.createdAt).getTime(),
+      }));
+      
+      const jsonValue = JSON.stringify(sanitizedTodos);
+      await AsyncStorage.setItem(TODOS_KEY, jsonValue);
+      console.log('Saved todos:', sanitizedTodos);
+    } catch (error) {
+      console.error('Error saving todos:', error);
+      throw error;
+    }
+  },
+
   async loadTodos(): Promise<Todo[]> {
     try {
-      const fileExists = await FileSystem.getInfoAsync(TODO_FILE);
-      if (!fileExists.exists) {
-        await this.saveTodos([]);
-        return [];
-      }
-      const content = await FileSystem.readAsStringAsync(TODO_FILE);
-      return JSON.parse(content);
+      const jsonValue = await AsyncStorage.getItem(TODOS_KEY);
+      if (!jsonValue) return [];
+      
+      const todos = JSON.parse(jsonValue);
+      // Ensure dates are properly parsed
+      const sanitizedTodos = todos.map((todo: Todo) => ({
+        ...todo,
+        createdAt: new Date(todo.createdAt).getTime(),
+      }));
+      
+      console.log('Loaded todos:', sanitizedTodos);
+      return sanitizedTodos;
     } catch (error) {
       console.error('Error loading todos:', error);
       return [];
     }
   },
 
-  async saveTodos(todos: Todo[]): Promise<void> {
+  async clearTodos() {
     try {
-      await FileSystem.writeAsStringAsync(TODO_FILE, JSON.stringify(todos));
+      await AsyncStorage.removeItem(TODOS_KEY);
+      console.log('Cleared all todos');
     } catch (error) {
-      console.error('Error saving todos:', error);
+      console.error('Error clearing todos:', error);
+      throw error;
     }
-  }
+  },
 }; 

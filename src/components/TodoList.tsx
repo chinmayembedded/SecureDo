@@ -68,9 +68,19 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
   const getFilteredTodos = () => {
     return todos.filter(todo => {
       const todoDate = new Date(todo.createdAt);
-      return isSameDay(todoDate, selectedDate);
+      todoDate.setHours(0, 0, 0, 0);
+      
+      return todoDate.getTime() === selectedDate.getTime();
     });
   };
+
+  // For debugging
+  useEffect(() => {
+    console.log('Current todos:', todos);
+    console.log('Selected date:', selectedDate.toISOString());
+    const filtered = getFilteredTodos();
+    console.log('Filtered todos:', filtered);
+  }, [todos, selectedDate]);
 
   const addTodo = async () => {
     if (!newTodoTitle.trim()) return;
@@ -123,7 +133,9 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
   };
 
   const selectDate = (date: Date) => {
-    setSelectedDate(date);
+    const newDate = new Date(date);
+    newDate.setHours(0, 0, 0, 0);
+    setSelectedDate(newDate);
   };
 
   const handleTodoPress = (todo: Todo) => {

@@ -20,7 +20,12 @@ import { DEFAULT_TASKS } from '../utils/recommendedTasks';
 
 const { width } = Dimensions.get('window');
 
-export function HomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
+interface HomeScreenProps {
+  onGetStarted: () => void;
+  onAddTodos: (todos: Todo[]) => Promise<void>;
+}
+
+export function HomeScreen({ onGetStarted, onAddTodos }: HomeScreenProps) {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [recommendedTasks] = useState(DEFAULT_TASKS);
 
@@ -32,15 +37,12 @@ export function HomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
       id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       title: task,
       isCompleted: false,
-      createdAt: today.getTime()
+      createdAt: today.getTime(),
+      details: '',
     }));
 
     try {
-      const existingTodos = await storage.loadTodos();
-      const updatedTodos = [...existingTodos, ...newTodos];
-      await storage.saveTodos(updatedTodos);
-      console.log('Added todos:', newTodos);
-      console.log('Total todos:', updatedTodos.length);
+      await onAddTodos(newTodos);
     } catch (error) {
       console.error('Error adding todos:', error);
     }
