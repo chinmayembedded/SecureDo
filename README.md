@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo_bg_removed.png" width="200" height="200" style="border-radius: 25px;">
+  <img src="assets/logo_bg_removed.png" width="300" height="300" style="border-radius: 25px;">
 </p>
 
 # SecureDo: Your Private Task Manager
