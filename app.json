@@ -4,7 +4,7 @@
     "slug": "secure-do",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo_bg_removed.png",
+    "icon": "./assets/logo_bg_removed.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -49,6 +49,11 @@
       "translucent": true,
       "backgroundColor": "transparent",
       "barStyle": "light-content"
+    },
+    "splash": {
+      "image": "./assets/logo_bg_removed.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#121212"
     }
   }
 }
