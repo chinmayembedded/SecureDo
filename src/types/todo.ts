@@ -9,6 +9,7 @@ export interface Todo {
   title: string;
   isCompleted: boolean;
   createdAt: number;
+  completedAt?: number;
   details?: string;
   imageUri?: string;
   checklist?: ChecklistItem[];

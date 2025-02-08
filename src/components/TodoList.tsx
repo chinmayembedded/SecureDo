@@ -105,7 +105,11 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
   const toggleTodo = async (id: string) => {
     const todo = todos.find(t => t.id === id);
     const updatedTodos = todos.map(todo =>
-      todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+      todo.id === id ? { 
+        ...todo, 
+        isCompleted: !todo.isCompleted,
+        completedAt: !todo.isCompleted ? Date.now() : undefined
+      } : todo
     );
     setTodos(updatedTodos);
     await storage.saveTodos(updatedTodos);

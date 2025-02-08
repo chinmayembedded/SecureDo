@@ -54,7 +54,8 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
     "victory-native": "^41.16.1",
-    "expo-document-picker": "~13.0.3"
+    "expo-document-picker": "~13.0.3",
+    "@react-native-community/datetimepicker": "8.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
