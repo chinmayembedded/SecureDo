@@ -6,7 +6,7 @@ export const theme = {
     success: '#27AE60',
     text: '#000000',
     textSecondary: '#666666',
-    gradient: ['#FFFFFF', '#F8F8F8'],
+    gradient: ['#F8F8F8','#F8F8F8'],
     error: '#E74C3C',
     accent: '#EEEEEE',
   },

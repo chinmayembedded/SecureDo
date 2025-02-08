@@ -147,8 +147,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xl,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     borderRadius: theme.borderRadius.lg,
   },
   headerContainer: {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   continueButtonText: {
-    color: theme.colors.background,
+    color: theme.colors.text,
     fontSize: 16,
     fontWeight: '600',
   },

@@ -164,10 +164,10 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
       transition={{ type: 'spring', delay: 100 }}
       style={styles.headerContainer}
     >
-      <Image
+      {/* <Image
         source={require('../../assets/logo_bg_removed.png')}
         style={styles.logo}
-      />
+      /> */}
     </MotiView>
   );
 
@@ -178,9 +178,11 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
       transition={{ type: 'timing', duration: 800 }}
       style={styles.calendarContainer}
     >
+      <Text style={styles.sectionTitle}>TASK CALENDAR</Text>
       <View style={styles.monthHeader}>
         <TouchableOpacity onPress={() => navigateWeek('prev')}>
           <Feather name="chevron-left" size={24} color={theme.colors.text} />
+
         </TouchableOpacity>
         <Text style={styles.monthText}>{getHeaderDate()}</Text>
         <TouchableOpacity onPress={() => navigateWeek('next')}>
@@ -442,6 +444,13 @@ const styles = StyleSheet.create({
   todayText: {
     color: '#FFFFFF',
     fontWeight: '600',
+  },
+  sectionTitle: {
+    fontSize: 13,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.lg,
+    letterSpacing: 1,
+    fontWeight: '500',
   },
   content: {
     flex: 1,

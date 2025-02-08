@@ -36,10 +36,10 @@ export function Settings({ todos, setTodos }: SettingsProps) {
       transition={{ type: 'spring', delay: 100 }}
       style={styles.headerContainer}
     >
-      <Image
+      {/* <Image
         source={require('../../assets/logo_bg_removed.png')}
         style={styles.logo}
-      />
+      /> */}
     </MotiView>
   );
 

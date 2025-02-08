@@ -10,7 +10,8 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "hideNavigationBar": true
+      "hideNavigationBar": true,
+      "backgroundColor": "#ffffff"
     },
     "android": {
       "adaptiveIcon": {
@@ -53,7 +54,7 @@
     "splash": {
       "image": "./assets/logo_bg_removed.png",
       "resizeMode": "contain",
-      "backgroundColor": "#121212"
+      "backgroundColor": "#FFFFFF"
     }
   }
 }

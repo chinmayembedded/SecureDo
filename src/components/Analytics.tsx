@@ -66,10 +66,10 @@ export function Analytics({ todos }: AnalyticsProps) {
       transition={{ type: 'spring', delay: 100 }}
       style={styles.headerContainer}
     >
-      <Image
+      {/* <Image
         source={require('../../assets/logo_bg_removed.png')}
         style={styles.logo}
-      />
+      /> */}
     </MotiView>
   );
 
@@ -81,11 +81,13 @@ export function Analytics({ todos }: AnalyticsProps) {
       {renderHeader()}
       <ScrollView style={styles.content}>
         <View style={styles.statsContainer}>
+        <Text style={styles.sectionTitle}>TASK ANALYTICS</Text>
           <MotiView
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ delay: 100 }}
             style={styles.statCard}
+
           >
             <Text style={styles.statTitle}>Completion Rate</Text>
             <View style={styles.progressContainer}>
@@ -262,5 +264,12 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 12,
+  },
+  sectionTitle: {
+    fontSize: 13,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.lg,
+    letterSpacing: 1,
+    fontWeight: '500',
   },
 }); 
