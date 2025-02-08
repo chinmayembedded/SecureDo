@@ -8,7 +8,10 @@ import {
   ScrollView,
   Dimensions,
   Modal,
-  Image
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from 'react-native';
 import { MotiView, AnimatePresence } from 'moti';
 import { Feather } from '@expo/vector-icons';
@@ -338,41 +341,61 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        {renderHeader()}
-        {renderCalendar()}
-        <View style={styles.content}>
-          {renderTodos()}
-          <MotiView
-            from={{ translateY: 100 }}
-            animate={{ translateY: 0 }}
-            transition={{ type: 'spring', delay: 500 }}
-            style={styles.inputContainer}
-          >
-            <TextInput
-              style={styles.input}
-              value={newTodoTitle}
-              onChangeText={setNewTodoTitle}
-              placeholder="Add a new task..."
-              placeholderTextColor={theme.colors.textSecondary}
-              onSubmitEditing={addTodo}
-            />
-            <TouchableOpacity 
-              style={[styles.addButton, !newTodoTitle.trim() && styles.addButtonDisabled]}
-              onPress={addTodo}
-              disabled={!newTodoTitle.trim()}
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      >
+        <View style={styles.container}>
+          {renderHeader()}
+          {renderCalendar()}
+          
+          <View style={styles.content}>
+            <ScrollView 
+              style={styles.todoList}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
             >
-              <View style={styles.addButtonGradient}>
-                <Feather name="plus" size={24} color={theme.colors.background} />
-              </View>
-            </TouchableOpacity>
-          </MotiView>
+              {renderTodos()}
+              {/* Add extra padding at bottom for keyboard */}
+              <View style={{ height: 100 }} />
+            </ScrollView>
+
+            <MotiView
+              from={{ translateY: 100 }}
+              animate={{ translateY: 0 }}
+              transition={{ type: 'spring', delay: 500 }}
+              style={[
+                styles.inputContainer,
+                Platform.OS === 'ios' && { paddingBottom: theme.spacing.xl }
+              ]}
+            >
+              <TextInput
+                style={styles.input}
+                value={newTodoTitle}
+                onChangeText={setNewTodoTitle}
+                placeholder="Add a new task..."
+                placeholderTextColor={theme.colors.textSecondary}
+                onSubmitEditing={addTodo}
+              />
+              <TouchableOpacity 
+                style={[styles.addButton, !newTodoTitle.trim() && styles.addButtonDisabled]}
+                onPress={addTodo}
+                disabled={!newTodoTitle.trim()}
+              >
+                <View style={styles.addButtonGradient}>
+                  <Feather name="plus" size={24} color={theme.colors.background} />
+                </View>
+              </TouchableOpacity>
+            </MotiView>
+          </View>
         </View>
-        <Celebration 
-          visible={showCelebration} 
-          onClose={() => setShowCelebration(false)} 
-        />
-      </View>
+      </KeyboardAvoidingView>
+
+      <Celebration 
+        visible={showCelebration} 
+        onClose={() => setShowCelebration(false)} 
+      />
     </GestureHandlerRootView>
   );
 }
@@ -458,15 +481,18 @@ const styles = StyleSheet.create({
   },
   todoList: {
     flex: 1,
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: 4,
   },
   todoItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: theme.spacing.md,
+    padding: theme.spacing.lg,
     borderRadius: theme.borderRadius.lg,
     marginBottom: theme.spacing.sm,
     backgroundColor: theme.colors.surface,
+    marginHorizontal: 5,
+    width: '95%',
+    alignSelf: 'center',
   },
   completedTodoItem: {
     backgroundColor: theme.colors.surface,
@@ -498,14 +524,17 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     padding: theme.spacing.md,
-    paddingBottom: theme.spacing.xl,
+    paddingBottom: theme.spacing.sm,
+    // backgroundColor: theme.colors.background,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.accent,
   },
   input: {
     flex: 1,
     height: 50,
     backgroundColor: theme.colors.surface,
     borderRadius: 25,
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.md,
     marginRight: theme.spacing.md,
     fontSize: 16,
     color: theme.colors.text,

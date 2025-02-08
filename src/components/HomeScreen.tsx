@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    marginTop: -40,
+    marginTop: -20,
     padding: theme.spacing.lg,
     backgroundColor: theme.colors.background,
     borderTopLeftRadius: 30,
