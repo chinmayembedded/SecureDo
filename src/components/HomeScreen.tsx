@@ -134,22 +134,22 @@ export function HomeScreen({ onGetStarted, onAddTodos }: HomeScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.background,
   },
   header: {
     height: 350,
     justifyContent: 'center',
     padding: theme.spacing.lg,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.background,
   },
   logoContainer: {
     alignItems: 'center',
     marginBottom: theme.spacing.xl,
   },
   logo: {
-    width: 140,
-    height: 140,
-    borderRadius: 20,
+    width: 100,
+    height: 100,
+    borderRadius: theme.borderRadius.lg,
   },
   headerContainer: {
     marginTop: theme.spacing.lg,
@@ -163,10 +163,10 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     marginTop: -40,
+    padding: theme.spacing.lg,
     backgroundColor: theme.colors.background,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    padding: theme.spacing.lg,
     borderTopWidth: 1,
     borderColor: theme.colors.accent,
   },
