@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
   },
   todayDate: {
     borderWidth: 1,
-    borderColor: '#FFFFFF',
+    borderColor: '#000000',
     backgroundColor: 'rgba(255,255,255,0.2)',
   },
   dayText: {
@@ -439,10 +439,10 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   selectedDateText: {
-    color: '#FFFFFF',
+    color: '#000000',
   },
   todayText: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontWeight: '600',
   },
   sectionTitle: {
