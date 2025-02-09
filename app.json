@@ -10,15 +10,20 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "hideNavigationBar": true,
       "backgroundColor": "#ffffff"
     },
     "android": {
+      "package": "com.securedo.app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo_bg_removed.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [],
+      "allowBackup": true,
+      "softwareKeyboardLayoutMode": "pan"
     },
+    
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -35,26 +40,42 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0",
+            "enableProguardInReleaseBuilds": true,
+            "extraProguardRules": "-keep class com.google.android.material.** { *; }",
+            "enableShrinkResources": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
     },
-    "navigationBar": {
-      "visible": "immersive"
-    },
-    "androidNavigationBar": {
-      "visible": "immersive"
-    },
     "androidStatusBar": {
       "translucent": true,
-      "backgroundColor": "transparent",
-      "barStyle": "light-content"
+      "barStyle": "light-content",
+      "backgroundColor": "#00000088"
     },
     "splash": {
       "image": "./assets/logo_bg_removed.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFFFFF"
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5d7fb7d7-8a49-4a4e-97d7-b045e7b59a0c"
+      }
+    },
+    "owner": "chinembedded"
   }
 }

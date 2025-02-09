@@ -59,6 +59,7 @@ export function Analytics({ todos }: AnalyticsProps) {
     // Get last 7 days data
     const dailyCompletion = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
+      
       date.setDate(date.getDate() - (6 - i));
       date.setHours(0, 0, 0, 0);
       
