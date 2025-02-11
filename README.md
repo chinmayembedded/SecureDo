@@ -60,17 +60,6 @@ SecureDo is a privacy-focused task management app that keeps your personal tasks
 - Private image handling
 - Secure PDF generation for sharing
 
-## Getting Started
-
-1. Install dependencies:
-```bash
-npm install
-```
-
-2. Start the app:
-```bash
-npx expo start
-```
 
 ## Privacy Policy
 SecureDo is committed to your privacy. We don't:
