@@ -10,6 +10,7 @@ export interface Todo {
   isCompleted: boolean;
   createdAt: number;
   completedAt?: number;
+  dueTime?: number;
   details?: string;
   imageUri?: string;
   checklist?: ChecklistItem[];

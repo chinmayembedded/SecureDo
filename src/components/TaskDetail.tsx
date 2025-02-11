@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,13 +16,15 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import { MotiView } from 'moti';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as Notifications from 'expo-notifications';
 import { theme } from '../theme';
 import { Todo, ChecklistItem } from '../types/todo';
 
 interface TaskDetailProps {
   todo: Todo;
   onBack: () => void;
-  onSave: (id: string, details: string, imageUri?: string, checklist?: ChecklistItem[]) => void;
+  onSave: (id: string, details: string, imageUri?: string, checklist?: ChecklistItem[], dueTime?: number) => void;
 }
 
 export function TaskDetail({ todo, onBack, onSave }: TaskDetailProps) {
@@ -31,9 +33,70 @@ export function TaskDetail({ todo, onBack, onSave }: TaskDetailProps) {
   const [checklist, setChecklist] = useState<ChecklistItem[]>(todo.checklist || []);
   const [newChecklistItem, setNewChecklistItem] = useState('');
   const [isSharing, setIsSharing] = useState(false);
+  const [dueTime, setDueTime] = useState<Date | undefined>(
+    todo.dueTime ? new Date(todo.dueTime) : undefined
+  );
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const handleSave = () => {
-    onSave(todo.id, details, imageUri, checklist);
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
+  const requestNotificationPermission = async () => {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Required', 'Please enable notifications to receive reminders');
+    }
+  };
+
+  const scheduleNotification = async (taskTitle: string, dueTime: number) => {
+    const now = new Date();
+    const dueDate = new Date(dueTime);
+    
+    // Check if the task is due today
+    const isToday = dueDate.getDate() === now.getDate() &&
+                    dueDate.getMonth() === now.getMonth() &&
+                    dueDate.getFullYear() === now.getFullYear();
+
+    // Only schedule notification if the task is due today and due time is in the future
+    if (isToday && dueTime > now.getTime()) {
+      const notificationTime = dueTime - (30 * 60 * 1000); // 30 minutes before due time
+      
+      // Only schedule if notification time is in the future
+      if (notificationTime > now.getTime()) {
+        // Cancel any existing notifications for this task
+        await cancelTaskNotification(todo.id);
+
+        // Schedule new notification
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: 'Task Due Soon',
+            body: `"${taskTitle}" is due in 30 minutes`,
+            data: { taskId: todo.id },
+            sound: true,
+            priority: 'max',
+          },
+          trigger: {
+            date: new Date(notificationTime),
+            seconds: Math.floor((notificationTime - now.getTime()) / 1000),
+          },
+          identifier: todo.id,
+        });
+        
+        console.log(`Notification scheduled for ${new Date(notificationTime).toLocaleTimeString()}`);
+      }
+    }
+  };
+
+  const cancelTaskNotification = async (taskId: string) => {
+    await Notifications.cancelScheduledNotificationAsync(taskId);
+  };
+
+  const handleSave = async () => {
+    if (dueTime) {
+      await scheduleNotification(todo.title, dueTime.getTime());
+    }
+    onSave(todo.id, details, imageUri, checklist, dueTime?.getTime());
     onBack();
   };
 
@@ -147,6 +210,19 @@ export function TaskDetail({ todo, onBack, onSave }: TaskDetailProps) {
       console.error(error);
     } finally {
       setIsSharing(false);
+    }
+  };
+
+  const handleTimeChange = (event: any, selectedTime?: Date) => {
+    setShowTimePicker(false);
+    if (selectedTime) {
+      // Combine today's date with selected time
+      const now = new Date();
+      selectedTime.setFullYear(now.getFullYear());
+      selectedTime.setMonth(now.getMonth());
+      selectedTime.setDate(now.getDate());
+      
+      setDueTime(selectedTime);
     }
   };
 
@@ -265,6 +341,28 @@ export function TaskDetail({ todo, onBack, onSave }: TaskDetailProps) {
             <Feather name="image" size={24} color={theme.colors.text} />
             <Text style={styles.addImageText}>Add Image</Text>
           </TouchableOpacity>
+        )}
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Due Time</Text>
+          <TouchableOpacity
+            style={styles.timeButton}
+            onPress={() => setShowTimePicker(true)}
+          >
+            <Feather name="clock" size={20} color={theme.colors.text} />
+            <Text style={styles.timeText}>
+              {dueTime ? dueTime.toLocaleTimeString() : 'Set due time'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {showTimePicker && (
+          <DateTimePicker
+            value={dueTime || new Date()}
+            mode="time"
+            is24Hour={true}
+            onChange={handleTimeChange}
+          />
         )}
       </ScrollView>
 
@@ -454,5 +552,21 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     padding: theme.spacing.sm,
+  },
+  section: {
+    marginTop: theme.spacing.lg,
+  },
+  timeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.surface,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+    marginTop: theme.spacing.sm,
+  },
+  timeText: {
+    marginLeft: theme.spacing.md,
+    fontSize: 16,
+    color: theme.colors.text,
   },
 }); 

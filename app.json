@@ -19,7 +19,11 @@
         "foregroundImage": "./assets/logo_bg_removed.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [],
+      "permissions": [
+        "NOTIFICATIONS",
+        "SCHEDULE_EXACT_ALARM",
+        "USE_EXACT_ALARM"
+      ],
       "allowBackup": true,
       "softwareKeyboardLayoutMode": "pan"
     },
@@ -52,6 +56,15 @@
             "extraProguardRules": "-keep class com.google.android.material.** { *; }",
             "enableShrinkResources": true
           }
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/logo_bg_removed.png",
+          "color": "#ffffff",
+          "sounds": ["./assets/notification.wav"],
+          "mode": "production"
         }
       ]
     ],
