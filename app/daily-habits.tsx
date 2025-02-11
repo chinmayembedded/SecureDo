@@ -12,10 +12,11 @@ import { MotiView } from 'moti';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Settings } from '../src/components/Settings';
 import { NotificationSettings } from '../src/components/NotificationSettings';
+import { AppInfo } from '../src/components/AppInfo';
 
 export default function DailyHabits() {
   const [hasOnboarded, setHasOnboarded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'Tasks' | 'Analytics' | 'Settings' | 'Notifications'>('Tasks');
+  const [activeTab, setActiveTab] = useState<'Tasks' | 'Analytics' | 'Settings' | 'Notifications' | 'Info'>('Tasks');
   const [todos, setTodos] = useState<Todo[]>([]);
   const insets = useSafeAreaInsets();
 
@@ -66,6 +67,8 @@ export default function DailyHabits() {
             <Analytics todos={todos} />
           ) : activeTab === 'Notifications' ? (
             <NotificationSettings />
+          ) : activeTab === 'Info' ? (
+            <AppInfo />
           ) : (
             <Settings todos={todos} setTodos={setTodos} />
           )}
@@ -135,6 +138,26 @@ export default function DailyHabits() {
                   name="bell"
                   size={24}
                   color={activeTab === 'Notifications' ? theme.colors.primary : theme.colors.textSecondary}
+                />
+              </View>
+            </MotiView>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.tab}
+            onPress={() => setActiveTab('Info')}
+          >
+            <MotiView
+              animate={{ 
+                opacity: activeTab === 'Info' ? 1 : 0.6,
+              }}
+              transition={{ type: 'timing', duration: 200 }}
+            >
+              <View style={styles.tabButton}>
+                <Feather
+                  name="info"
+                  size={24}
+                  color={activeTab === 'Info' ? theme.colors.primary : theme.colors.textSecondary}
                 />
               </View>
             </MotiView>
