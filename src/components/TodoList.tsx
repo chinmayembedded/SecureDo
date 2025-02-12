@@ -474,11 +474,12 @@ const styles = StyleSheet.create({
   dateItem: {
     width: 54,
     height: 74,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     marginRight: theme.spacing.sm,
     borderRadius: theme.borderRadius.lg,
     backgroundColor: theme.colors.surface,
+    paddingTop: 12,
   },
   selectedDate: {
     backgroundColor: theme.colors.surfaceHighlight,
@@ -491,7 +492,7 @@ const styles = StyleSheet.create({
   dayText: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: 4,
+    marginBottom: 8,
     fontWeight: '500',
   },
   dateText: {
