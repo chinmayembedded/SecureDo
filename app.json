@@ -63,7 +63,6 @@
         {
           "icon": "./assets/logo_bg_removed.png",
           "color": "#ffffff",
-          "sounds": ["./assets/notification.wav"],
           "mode": "production"
         }
       ]
