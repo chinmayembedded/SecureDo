@@ -322,6 +322,19 @@ export function TaskDetail({ todo, onBack, onSave }: TaskDetailProps) {
           ))}
         </View>
 
+        {/* <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Due Time</Text>
+          <TouchableOpacity
+            style={styles.timeButton}
+            onPress={() => setShowTimePicker(true)}
+          >
+            <Feather name="clock" size={20} color={theme.colors.text} />
+            <Text style={styles.timeText}>
+              {dueTime ? dueTime.toLocaleTimeString() : 'Set due time'}
+            </Text>
+          </TouchableOpacity>
+        </View> */}
+
         <Text style={styles.label}>Image</Text>
         {imageUri ? (
           <View style={styles.imageContainer}>
@@ -342,19 +355,7 @@ export function TaskDetail({ todo, onBack, onSave }: TaskDetailProps) {
             <Text style={styles.addImageText}>Add Image</Text>
           </TouchableOpacity>
         )}
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Due Time</Text>
-          <TouchableOpacity
-            style={styles.timeButton}
-            onPress={() => setShowTimePicker(true)}
-          >
-            <Feather name="clock" size={20} color={theme.colors.text} />
-            <Text style={styles.timeText}>
-              {dueTime ? dueTime.toLocaleTimeString() : 'Set due time'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        
 
         {showTimePicker && (
           <DateTimePicker
