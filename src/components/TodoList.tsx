@@ -22,6 +22,7 @@ import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler'
 import { Celebration } from './Celebration';
 import { TaskDetail } from './TaskDetail';
 import { ChecklistItem } from '../types/checklist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
@@ -48,6 +49,7 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
   const [showCelebration, setShowCelebration] = useState(false);
   const [isDetailView, setIsDetailView] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
+  const [userName, setUserName] = useState('');
 
   const getDaysArray = () => {
     const days = [];
@@ -85,6 +87,28 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
     const filtered = getFilteredTodos();
     console.log('Filtered todos:', filtered);
   }, [todos, selectedDate]);
+
+  useEffect(() => {
+    loadUserName();
+  }, []);
+
+  const loadUserName = async () => {
+    try {
+      const name = await AsyncStorage.getItem('@user_name');
+      if (name) setUserName(name);
+    } catch (error) {
+      console.error('Error loading user name:', error);
+    }
+  };
+
+  const formatDate = () => {
+    const date = new Date();
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric' 
+    });
+  };
 
   const addTodo = async () => {
     if (!newTodoTitle.trim()) return;
@@ -185,11 +209,21 @@ export function TodoList({ todos, setTodos }: TodoListProps) {
       transition={{ type: 'timing', duration: 800 }}
       style={styles.calendarContainer}
     >
-      <Text style={styles.sectionTitle}>TASK CALENDAR</Text>
+      {userName ? (
+        <>
+          <Text style={styles.greeting}>Hello, {userName}</Text>
+          <Text style={styles.dateText}>{formatDate()}</Text>
+        </>
+      ) : (
+        <>
+          <Text style={styles.sectionTitle}>TASK CALENDAR</Text>
+          <Text style={styles.dateText}>{formatDate()}</Text>
+        </>
+      )}
+      
       <View style={styles.monthHeader}>
         <TouchableOpacity onPress={() => navigateWeek('prev')}>
           <Feather name="chevron-left" size={24} color={theme.colors.text} />
-
         </TouchableOpacity>
         <Text style={styles.monthText}>{getHeaderDate()}</Text>
         <TouchableOpacity onPress={() => navigateWeek('next')}>
@@ -461,9 +495,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   dateText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.colors.text,
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.lg,
   },
   selectedDateText: {
     color: '#000000',
@@ -589,5 +623,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: theme.colors.textSecondary,
     marginRight: 4,
+  },
+  greeting: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xs,
   },
 }); 

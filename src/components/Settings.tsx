@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
   Image,
+  TextInput,
 } from 'react-native';
 import { MotiView } from 'moti';
 import { Feather } from '@expo/vector-icons';
@@ -17,17 +18,45 @@ import { theme } from '../theme';
 import { storage } from '../utils/storage';
 import { Todo } from '../types/todo';
 import { ProgressBar } from './ProgressBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface SettingsProps {
   todos: Todo[];
   setTodos: (todos: Todo[]) => void;
 }
 
+const USER_NAME_KEY = '@user_name';
+
 export function Settings({ todos, setTodos }: SettingsProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteProgress, setDeleteProgress] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [isEditingName, setIsEditingName] = useState(false);
+
+  useEffect(() => {
+    loadUserName();
+  }, []);
+
+  const loadUserName = async () => {
+    try {
+      const name = await AsyncStorage.getItem(USER_NAME_KEY);
+      if (name) setUserName(name);
+    } catch (error) {
+      console.error('Error loading user name:', error);
+    }
+  };
+
+  const handleSaveName = async (newName: string) => {
+    try {
+      await AsyncStorage.setItem(USER_NAME_KEY, newName);
+      setUserName(newName);
+      setIsEditingName(false);
+    } catch (error) {
+      console.error('Error saving user name:', error);
+    }
+  };
 
   const renderHeader = () => (
     <MotiView
@@ -170,6 +199,46 @@ export function Settings({ todos, setTodos }: SettingsProps) {
       {renderHeader()}
       
       <View style={styles.content}>
+        <Text style={styles.sectionTitle}>PERSONALIZATION</Text>
+        
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          style={styles.card}
+        >
+          <View style={styles.nameSection}>
+            <Text style={styles.nameTitle}>Your Name</Text>
+            <Text style={styles.nameSubtitle}>Stays private on your device</Text>
+            {isEditingName ? (
+              <View style={styles.nameEditContainer}>
+                <TextInput
+                  style={styles.nameInput}
+                  value={userName}
+                  onChangeText={setUserName}
+                  placeholder="Enter your name"
+                  autoFocus
+                />
+                <TouchableOpacity
+                  style={styles.nameSaveButton}
+                  onPress={() => handleSaveName(userName)}
+                >
+                  <Feather name="check" size={20} color={theme.colors.primary} />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.nameDisplay}
+                onPress={() => setIsEditingName(true)}
+              >
+                <Text style={styles.nameText}>
+                  {userName || 'Add your name'}
+                </Text>
+                <Feather name="edit-2" size={16} color={theme.colors.textSecondary} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </MotiView>
+
         <Text style={styles.sectionTitle}>DATA MANAGEMENT</Text>
 
         {isDeleting && (
@@ -270,5 +339,50 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: theme.spacing.sm,
     textAlign: 'center',
+  },
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
+  },
+  nameSection: {
+    gap: theme.spacing.sm,
+  },
+  nameTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: theme.colors.text,
+  },
+  nameSubtitle: {
+    fontSize: 13,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.sm,
+  },
+  nameEditContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  nameInput: {
+    flex: 1,
+    height: 40,
+    backgroundColor: theme.colors.background,
+    borderRadius: theme.borderRadius.md,
+    paddingHorizontal: theme.spacing.md,
+    color: theme.colors.text,
+  },
+  nameSaveButton: {
+    padding: theme.spacing.sm,
+  },
+  nameDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: theme.spacing.sm,
+  },
+  nameText: {
+    fontSize: 16,
+    color: theme.colors.text,
   },
 }); 
