@@ -2,9 +2,13 @@
   <img src="assets/logo_bg_removed.png" width="300" height="300" style="border-radius: 25px;">
 </p>
 
-# SecureDo: Your Private Task Manager
+# SecureDo - Privacy-First Task Manager
 
 SecureDo is a privacy-focused task management app that keeps your personal tasks and habits completely secure on your device. Unlike cloud-based solutions, SecureDo prioritizes your privacy by storing all data locally.
+
+<p align="center">
+  <img src="assets/app_screenshots.png" width="100%" alt="App Screenshots"/>
+</p>
 
 ## Key Features
 
